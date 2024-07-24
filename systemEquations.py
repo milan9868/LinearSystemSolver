@@ -1,20 +1,31 @@
-import z3
-from z3 import Int, Solver
+from z3 import *
 
 
-x = Int('x')
-y = Int('y')
+n = int(input("Unesite dimenziju sistema: "))
+matrix = []
+for i in range(n):
+    numbers = input(f"Unesite koeficijente za {i}. jednacinu: ")
+    numbers_parsed = [int(i) for i in numbers.split()]
+    matrix.append(numbers_parsed)
+
+print(matrix)
+
+
+x, y, z = Ints('x y z')
+variables = [x, y, z]
 s = Solver()
-s.add(x > 6)
-s.add(y > 9)
-s.add(x + y == 0)
+for i in range(n):
+    constraint = sum(a*b for a, b in zip(variables,matrix[i][:-1])) == matrix[i][-1]
+    s.add(constraint)
 
-if s.check() == z3.sat:
-    model = s.model()
-    print(f"x = {model[x]}")
-    print(f"y = {model[y]}")
-else:
-    print("nema resenja")
+if s.check() == sat:
+    solutions = s.model()
+    print(f"x = {solutions[x]}")
+    print(f"y = {solutions[y]}")
+    #print(f"z = {solutions[z]}")
+
+
+
 
 
 
